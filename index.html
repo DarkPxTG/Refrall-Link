@@ -15,29 +15,77 @@
             flex-direction: column;
             justify-content: space-between;
             height: 100vh;
+            overflow: hidden;
+        }
+
+        /* افکت برف */
+        .snow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
         }
 
         .header {
             padding: 20px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            position: relative;
         }
 
-        .header img {
-            width: 40px;
-        }
-
+        /* قابلیت تغییر سایز دکمه "Your Wallet" */
         .wallet {
             display: flex;
             align-items: center;
-            background-color: #3a3a3a;
-            padding: 10px;
-            border-radius: 20px;
+            background-color: #007bff;
+            padding: 10px 15px;
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .wallet img {
+            width: 20px;
+            margin-right: 8px;
         }
 
         .wallet span {
             margin-left: 10px;
+        }
+
+        .wallet:hover {
+            transform: scale(1.1);
+        }
+
+        .top-banner {
+            position: absolute;
+            top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .top-banner div {
+            background-color: #222;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .top-banner a {
+            background-color: #007bff;
+            padding: 10px 15px;
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
         }
 
         .content {
@@ -57,8 +105,9 @@
         }
 
         .rank {
-            font-size: 20px;
+            font-size: 16px;
             color: #FFD700;
+            margin-bottom: 20px;
         }
 
         .buttons {
@@ -71,7 +120,7 @@
 
         .buttons button {
             padding: 15px 25px;
-            background-color: #3a3a3a;
+            background-color: #007bff;
             color: white;
             font-size: 16px;
             border: none;
@@ -82,19 +131,31 @@
         }
 
         .buttons button:hover {
-            background-color: #007bff;
+            background-color: #0056b3;
         }
 
+        .divider {
+            width: 2px;
+            height: 30px;
+            background-color: white;
+            margin: 10px auto;
+        }
+
+        /* خط عمودی بین آیکون‌های فوتر */
         .footer {
             background-color: #1f1f1f;
             display: flex;
             justify-content: space-around;
+            align-items: center;
             padding: 10px 0;
+            position: relative;
         }
 
         .footer div {
             text-align: center;
             cursor: pointer;
+            position: relative;
+            padding: 5px;
         }
 
         .footer div img {
@@ -106,20 +167,49 @@
             background-color: #333;
             border-radius: 5px;
         }
+
+        .footer::before {
+            content: "";
+            position: absolute;
+            width: 2px;
+            height: 30px;
+            background-color: white;
+            left: 25%;
+            transform: translateX(-50%);
+        }
+
+        .footer::after {
+            content: "";
+            position: absolute;
+            width: 2px;
+            height: 30px;
+            background-color: white;
+            right: 25%;
+            transform: translateX(50%);
+        }
+
     </style>
 </head>
 <body>
 
+    <!-- افکت برف متحرک -->
+    <canvas class="snow"></canvas>
+
     <div class="header">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Blue_diamond_shape_icon.svg" alt="Wallet Icon">
-        <div class="wallet">
-            <span>Your wallet</span>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Font_Awesome_5_solid_chevron-down.svg/512px-Font_Awesome_5_solid_chevron-down.svg.png" alt="Dropdown Icon">
+        <div class="top-banner">
+            <div>Check the footprint map</div>
+            <a href="https://aparat.com">➜</a>
         </div>
     </div>
 
     <div class="content">
-        <img src="paws.png" alt="Paws Logo">
+        <div class="wallet">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Blue_diamond_shape_icon.svg" alt="Ton Icon">
+            <span>Your wallet</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Font_Awesome_5_solid_chevron-down.svg/512px-Font_Awesome_5_solid_chevron-down.svg.png" alt="Dropdown Icon">
+        </div>
+
+        <img src="./git gub appdate/assets/images/bird.png" alt="Paws Logo">
         <div class="score">272.86K PAWS</div>
         <div class="rank">CHAMP RANK 🏆</div>
 
@@ -150,13 +240,59 @@
 
     <script>
         function joinCommunity() {
-            alert('Checking rewards...');
+            alert('Joining community...');
         }
 
         function checkRewards() {
             alert('Checking rewards...');
         }
+
+        /* افکت برف */
+        let canvas = document.querySelector('.snow');
+        let ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let snowflakes = [];
+
+        function createSnowflakes() {
+            for (let i = 0; i < 100; i++) {
+                snowflakes.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 4 + 1,
+                    speed: Math.random() * 3 + 1
+                });
+            }
+        }
+
+        function drawSnowflakes() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            snowflakes.forEach(flake => {
+                ctx.moveTo(flake.x, flake.y);
+                ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+            });
+            ctx.fill();
+        }
+
+        function updateSnowflakes() {
+            snowflakes.forEach(flake => {
+                flake.y += flake.speed;
+                if (flake.y > canvas.height) flake.y = 0;
+            });
+        }
+
+        function animateSnow() {
+            drawSnowflakes();
+            updateSnowflakes();
+            requestAnimationFrame(animateSnow);
+        }
+
+        createSnowflakes();
+        animateSnow();
     </script>
 
-    </body>
-    </html>
+</body>
+</html>
